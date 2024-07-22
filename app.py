@@ -17,7 +17,7 @@ client = InfluxDBClient(url=INFLUXDB_URL, token=INFLUXDB_TOKEN, org=INFLUXDB_ORG
 query_api = client.query_api()
 write_api = client.write_api(write_options=SYNCHRONOUS)
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 # MQTT setup
 mqtt_broker = "test.mosquitto.org"
@@ -186,5 +186,5 @@ def get_predictions():
     
     return jsonify({"success": True, "data": data}), 200
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)
