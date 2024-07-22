@@ -1,0 +1,7 @@
+Flask
+gunicorn
+paho-mqtt
+influxdb-client
+numpy
+pandas
+scikit-learn
