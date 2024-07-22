@@ -9,7 +9,7 @@ from sklearn.linear_model import LinearRegression
 
 # InfluxDB Cloud setup
 INFLUXDB_URL = "https://us-east-1-1.aws.cloud2.influxdata.com/"
-INFLUXDB_TOKEN = "4u122R5iZn9lZRpJe8x77117EwqGajOpnAo_7gWReFAlwqmTqx7qkU_XnQ5zInPounCDvJcpOJEzWbhINt3b5A=="
+INFLUXDB_TOKEN = "JxOMg3EzC5iyv2ClG6uLEfEK5wQjZMo_BYasY3MNrVr3aNAl3OAqKfRSn-NsI5mwqh1uzoVPSfVOFnZDb4Kscw=="
 INFLUXDB_ORG = "org"
 INFLUXDB_BUCKET = "bucket"
 
