@@ -17,7 +17,7 @@ client = InfluxDBClient(url=INFLUXDB_URL, token=INFLUXDB_TOKEN, org=INFLUXDB_ORG
 query_api = client.query_api()
 write_api = client.write_api(write_options=SYNCHRONOUS)
 
-app = Flask(__name__)
+app = Flask(_name_)
 
 # MQTT setup
 mqtt_broker = "test.mosquitto.org"
@@ -103,7 +103,11 @@ def predict_solar_light(df, hours=24):
         predictions[field] = model.predict(future_X)
     
     future_dates = [df.index[-1] + timedelta(hours=i+1) for i in range(hours)]
-    prediction_df = pd.DataFrame({'_time': future_dates, 'prediction_ldr1': predictions['ldr1'], 'prediction_ldr2': predictions['ldr2']})
+    prediction_df = pd.DataFrame({
+        '_time': future_dates,
+        'prediction_ldr1': predictions['ldr1'],
+        'prediction_ldr2': predictions['ldr2']
+    })
     
     return prediction_df
 
@@ -162,5 +166,25 @@ def run_analytics():
         print(f"Error: {e}")  # Debug statement
         return jsonify({"success": False, "message": str(e)}), 400
 
-if __name__ == '__main__':
+@app.route('/get-predictions', methods=['GET'])
+def get_predictions():
+    position = request.args.get('position')
+    if not position:
+        return jsonify({"success": False, "message": "Position not provided"}), 400
+
+    query = f'''
+    from(bucket: "{INFLUXDB_BUCKET}")
+      |> range(start: -24h)
+      |> filter(fn: (r) => r._measurement == "light_prediction")
+      |> filter(fn: (r) => r.position == "{position}")
+      |> keep(columns: ["_time", "predicted_ldr1", "predicted_ldr2"])
+      |> sort(columns: ["_time"], desc: false)
+    '''
+    result = query_api.query(org=INFLUXDB_ORG, query=query)
+    records = result[0].records if result else []
+    data = [{**record.values, '_time': record.get_time()} for record in records]
+    
+    return jsonify({"success": True, "data": data}), 200
+
+if _name_ == '_main_':
     app.run(host='0.0.0.0', port=8000)
